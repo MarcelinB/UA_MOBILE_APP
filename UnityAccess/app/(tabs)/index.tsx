@@ -1,70 +1,131 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import React from "react";
+import {
+  StyleSheet,
+  View,
+  TextInput,
+  TouchableOpacity,
+  Text,
+} from "react-native";
+import MapView, { PROVIDER_GOOGLE, Region } from "react-native-maps";
+import { Feather, FontAwesome } from "@expo/vector-icons";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+const MapScreen: React.FC = () => {
+  // Initial region configuration for the map
+  const initialRegion: Region = {
+    latitude: 43.6047, // Toulouse coordinates
+    longitude: 1.4442,
+    latitudeDelta: 0.1,
+    longitudeDelta: 0.1,
+  };
 
-export default function HomeScreen() {
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
+    <View style={styles.container}>
+      {/* Map View */}
+      <MapView style={styles.map} initialRegion={initialRegion} />
+
+      {/* Hamburger Menu */}
+      <TouchableOpacity style={styles.menuButton}>
+        <Feather name="menu" size={30} color="black" />
+      </TouchableOpacity>
+
+      {/* SOS Button */}
+      <TouchableOpacity style={styles.sosButton}>
+        <FontAwesome name="phone" size={24} color="white" />
+        <Text style={styles.sosText}>SOS</Text>
+      </TouchableOpacity>
+
+      {/* Warning Button */}
+      <TouchableOpacity style={styles.warningButton}>
+        <FontAwesome name="exclamation-triangle" size={24} color="white" />
+      </TouchableOpacity>
+
+      {/* Search Bar */}
+      <View style={styles.searchBar}>
+        <Feather name="search" size={24} color="black" />
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Rechercher un lieu ou une ville"
+          placeholderTextColor="black"
         />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+        <Feather name="mic" size={24} color="black" />
+      </View>
+    </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: {
+    flex: 1,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  map: {
+    ...StyleSheet.absoluteFillObject,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  menuButton: {
+    position: "absolute",
+    top: 50,
+    left: 20,
+    backgroundColor: "white",
+    borderRadius: 25,
+    padding: 10,
+    shadowColor: "#000",
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
+    elevation: 5,
+  },
+  sosButton: {
+    position: "absolute",
+    top: 50,
+    right: 20,
+    backgroundColor: "red",
+    borderRadius: 30,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
+    elevation: 5,
+  },
+  sosText: {
+    color: "white",
+    fontWeight: "bold",
+    marginLeft: 5,
+  },
+  warningButton: {
+    position: "absolute",
+    bottom: 130,
+    right: 20,
+    backgroundColor: "#FFA500",
+    borderRadius: 25,
+    padding: 15,
+    shadowColor: "#000",
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
+    elevation: 5,
+  },
+  searchBar: {
+    position: "absolute",
+    bottom: 30,
+    left: 20,
+    right: 20,
+    backgroundColor: "#D0D6F9",
+    borderRadius: 20,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
+    elevation: 5,
+  },
+  searchInput: {
+    flex: 1,
+    marginLeft: 10,
+    fontSize: 16,
+    color: "black",
   },
 });
+
+export default MapScreen;
