@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
 
-export default function SignupScreen() {
+export default function LogPage() {
   const router = useRouter();
 
   return (
@@ -43,7 +43,14 @@ export default function SignupScreen() {
       </Text>
 
       <TouchableOpacity>
-        <Text style={styles.footerText}>S'inscrire après</Text>
+        <Text
+          style={styles.footerText}
+          onPress={() => {
+            router.push("/(tabs)");
+          }}
+        >
+          S'inscrire après
+        </Text>
       </TouchableOpacity>
     </View>
   );
@@ -66,14 +73,16 @@ const styles = StyleSheet.create({
   primaryButton: {
     backgroundColor: "#5a67d8",
     borderRadius: 25,
-    paddingVertical: 15,
+    paddingVertical: 20,
     paddingHorizontal: 40,
     marginBottom: 20,
+    width: "100%",
   },
   primaryButtonText: {
     color: "white",
     fontWeight: "bold",
-    fontSize: 16,
+    textAlign: "center",
+    fontSize: 14,
   },
   separator: {
     flexDirection: "row",
@@ -92,6 +101,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 40,
     marginBottom: 20,
+    width: "100%",
   },
   socialButtonGoogle: {
     flexDirection: "row",
@@ -101,6 +111,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 40,
     marginBottom: 20,
+    width: "100%",
   },
   socialButtonApple: {
     flexDirection: "row",
@@ -110,16 +121,19 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 40,
     marginBottom: 20,
+    width: "100%",
   },
   socialButtonText: {
     marginLeft: 10,
     fontSize: 16,
     color: "white",
+    textAlign: "center",
   },
   socialButtonTextGoogle: {
     marginLeft: 10,
     fontSize: 16,
     color: "Black",
+    textAlign: "center",
   },
   policyText: {
     fontSize: 12,

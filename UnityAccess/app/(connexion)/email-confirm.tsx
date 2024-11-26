@@ -6,8 +6,10 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
+  Platform,
 } from "react-native";
 import { useRouter } from "expo-router";
+import { KeyboardAvoidingView } from "react-native";
 
 export default function EmailConfirmation() {
   const router = useRouter();
@@ -33,8 +35,7 @@ export default function EmailConfirmation() {
 
   const handleConfirm = () => {
     if (code.join("").length === 4) {
-      Alert.alert("Succès", "Votre code a été validé !");
-      router.replace("/(tabs)"); // Naviguer vers la page principale après succès
+      router.push("/email-confirmation-success");
       console.log("Code de confirmation :", code.join(""));
     } else {
       Alert.alert("Erreur", "Veuillez entrer un code de 4 chiffres.");
@@ -49,40 +50,44 @@ export default function EmailConfirmation() {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Confirmation adresse mail</Text>
-      <Text style={styles.subtitle}>
-        Confirmez votre compte en entrant le code de 4 chiffres que nous vous
-        envoyons sur votre adresse mail ab****@gmail.com
-      </Text>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <View style={styles.container}>
+        <Text style={styles.title}>Confirmation adresse mail</Text>
+        <Text style={styles.subtitle}>
+          Confirmez votre compte en entrant le code de 4 chiffres que nous vous
+          envoyons sur votre adresse mail ab****@gmail.com
+        </Text>
 
-      <View style={styles.codeInputContainer}>
-        {code.map((value, index) => (
-          <TextInput
-            key={index}
-            ref={(ref) => (inputRefs.current[index] = ref)} // Associer chaque champ à une référence
-            style={styles.codeInput}
-            keyboardType="numeric"
-            maxLength={1}
-            value={value}
-            onChangeText={(text) => handleInputChange(text, index)}
-            onKeyPress={({ nativeEvent }) => {
-              if (nativeEvent.key === "Backspace" && !value && index > 0) {
-                inputRefs.current[index - 1]?.focus(); // Retour au champ précédent
-              }
-            }}
-          />
-        ))}
+        <View style={styles.codeInputContainer}>
+          {code.map((value, index) => (
+            <TextInput
+              key={index}
+              ref={(ref) => (inputRefs.current[index] = ref)} // Associer chaque champ à une référence
+              style={styles.codeInput}
+              keyboardType="numeric"
+              maxLength={1}
+              value={value}
+              onChangeText={(text) => handleInputChange(text, index)}
+              onKeyPress={({ nativeEvent }) => {
+                if (nativeEvent.key === "Backspace" && !value && index > 0) {
+                  inputRefs.current[index - 1]?.focus(); // Retour au champ précédent
+                }
+              }}
+            />
+          ))}
+        </View>
+
+        <TouchableOpacity onPress={handleResendCode}>
+          <Text style={styles.resendText}>Renvoyer le code</Text>
+        </TouchableOpacity>
       </View>
-
-      <TouchableOpacity onPress={handleResendCode}>
-        <Text style={styles.resendText}>Renvoyer le code</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.button} onPress={handleConfirm}>
+      <TouchableOpacity style={styles.primaryButton} onPress={handleConfirm}>
         <Text style={styles.buttonText}>Confirmer →</Text>
       </TouchableOpacity>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -95,10 +100,11 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   title: {
-    fontSize: 22,
-    fontWeight: "bold",
+    fontSize: 24,
+    fontWeight: "800",
+    textAlign: "center",
+    marginBottom: 32,
     color: "#2E3A59",
-    marginBottom: 10,
   },
   subtitle: {
     fontSize: 14,
@@ -129,15 +135,18 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
     marginBottom: 20,
   },
-  button: {
-    backgroundColor: "#4F46E5",
-    paddingVertical: 15,
-    paddingHorizontal: 50,
-    borderRadius: 8,
+  primaryButton: {
+    backgroundColor: "#5a67d8",
+    borderRadius: 25,
+    paddingVertical: 20,
+    paddingHorizontal: 40,
+    marginBottom: 40,
+    width: "100%",
+    alignItems: "center",
   },
   buttonText: {
     color: "white",
-    fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: "600",
+    fontSize: 14,
   },
 });
