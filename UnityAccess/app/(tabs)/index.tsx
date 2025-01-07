@@ -8,6 +8,8 @@ import {
 } from "react-native";
 import MapView, { PROVIDER_GOOGLE, Region } from "react-native-maps";
 import { Feather, FontAwesome } from "@expo/vector-icons";
+import { AuthProvider, useAuth } from "@/components/AuthContext";
+import { router } from "expo-router";
 
 const MapScreen: React.FC = () => {
   // Initial region configuration for the map
@@ -17,6 +19,16 @@ const MapScreen: React.FC = () => {
     latitudeDelta: 0.1,
     longitudeDelta: 0.1,
   };
+  const { logout } = useAuth();
+
+  function handleLogout() {
+    logout();
+    router.replace("/(connexion)/log-page");
+  }
+  function handleSos() {
+    logout();
+    router.push("/sos-page");
+  }
 
   return (
     <View style={styles.container}>
@@ -29,7 +41,7 @@ const MapScreen: React.FC = () => {
       </TouchableOpacity>
 
       {/* SOS Button */}
-      <TouchableOpacity style={styles.sosButton}>
+      <TouchableOpacity style={styles.sosButton} onPress={handleSos}>
         <FontAwesome name="phone" size={24} color="white" />
         <Text style={styles.sosText}>SOS</Text>
       </TouchableOpacity>

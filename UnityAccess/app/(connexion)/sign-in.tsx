@@ -10,23 +10,55 @@ import {
   Platform,
 } from "react-native";
 import { useRouter } from "expo-router";
+import { useAuth } from "@/components/AuthContext";
+import { API_URL } from "@/constants/ApiUrl";
 
 export default function SignIn() {
   const router = useRouter();
+  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSignIn = () => {
+  const handleSignIn = async () => {
     if (!email || !password) {
       Alert.alert("Erreur", "Veuillez remplir tous les champs.");
       return;
     }
 
-    if (email === "test@example.com" && password === "password") {
-      Alert.alert("Succès", "Connexion réussie !");
+    try {
+      setLoading(true);
+      console.log("API_URL", API_URL + "/auth/login");
+      console.log("email", JSON.stringify({ email, password }));
+      // Appel API
+      const response = await fetch(API_URL + "/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+      console.log("data", response);
+
+      if (response.status !== 201) {
+        console.log("error", response);
+        throw new Error("Identifiants incorrects.");
+      }
+
+      const userData = {
+        uid: data.uid, // Par exemple : "12345"
+        email: data.email, // Par exemple : "user@example.com"
+        token: data.token, // Jeton renvoyé par l'API
+      };
+      await login(userData);
+
       router.replace("/(tabs)");
-    } else {
-      Alert.alert("Erreur", "Identifiants incorrects.");
+    } catch (error: any) {
+      Alert.alert("Erreur", error.message || "Une erreur est survenue.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -74,8 +106,14 @@ export default function SignIn() {
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={styles.signInButton} onPress={handleSignIn}>
-        <Text style={styles.signInButtonText}>Se connecter →</Text>
+      <TouchableOpacity
+        style={[styles.signInButton, loading && { opacity: 0.7 }]}
+        onPress={handleSignIn}
+        disabled={loading}
+      >
+        <Text style={styles.signInButtonText}>
+          {loading ? "Connexion..." : "Se connecter →"}
+        </Text>
       </TouchableOpacity>
     </KeyboardAvoidingView>
   );
