@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "@/components/AuthContext";
-import { API_URL } from "@/constants/ApiUrl";
+import API_URL from "@/constants/ApiUrl";
 
 export default function SignIn() {
   const router = useRouter();

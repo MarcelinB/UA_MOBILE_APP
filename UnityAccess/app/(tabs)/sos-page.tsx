@@ -8,6 +8,7 @@ import {
   Dimensions,
   Modal,
   Alert,
+  Linking,
 } from "react-native";
 import MapView, { Marker, Region, PROVIDER_DEFAULT } from "react-native-maps";
 import * as Location from "expo-location";
@@ -54,9 +55,10 @@ const SOSPage = () => {
   };
 
   const confirmEmergencyCall = () => {
-    Alert.alert("Emergency Call", "Calling emergency number 112", [
-      { text: "OK" },
-    ]);
+    const emergencyNumber = "tel:112";
+    Linking.openURL(emergencyNumber).catch((err) =>
+      Alert.alert("Error", "Unable to make the call. Please try again.")
+    );
   };
 
   const handleRequestHelp = () => {
@@ -71,6 +73,7 @@ const SOSPage = () => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.divider} />
       <MapView
         style={styles.map}
         initialRegion={location}
@@ -87,6 +90,16 @@ const SOSPage = () => {
         {location && <Marker coordinate={location} title="Your Location" />}
       </MapView>
 
+      {/* Coordonnées de l'utilisateur */}
+      <View style={styles.coordinatesContainer}>
+        <Text style={styles.coordinatesText}>
+          Latitude : {location.latitude.toFixed(6)}
+        </Text>
+        <Text style={styles.coordinatesText}>
+          Longitude : {location.longitude.toFixed(6)}
+        </Text>
+      </View>
+
       {/* Boutons principaux */}
       <TouchableOpacity
         style={styles.buttonEmergency}
@@ -100,7 +113,7 @@ const SOSPage = () => {
         <Text style={styles.buttonText}>Demander de l'aide</Text>
       </TouchableOpacity>
 
-      {/* Modale pour "Appeler les secours" */}
+      {/* Modales pour "Appeler les secours" et "Demander de l'aide" */}
       <Modal
         visible={showEmergencyModal}
         transparent={true}
@@ -131,7 +144,6 @@ const SOSPage = () => {
         </View>
       </Modal>
 
-      {/* Modale pour "Demander de l'aide" */}
       <Modal
         visible={showHelpModal}
         transparent={true}
@@ -172,6 +184,15 @@ const styles = StyleSheet.create({
     width: width,
     height: height * 0.5,
     padding: 20,
+  },
+  coordinatesContainer: {
+    padding: 10,
+    alignItems: "center",
+    backgroundColor: "white",
+  },
+  coordinatesText: {
+    fontSize: 16,
+    color: "#333",
   },
   buttonEmergency: {
     backgroundColor: "red",
@@ -256,6 +277,11 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     marginRight: 10,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: "#ccc",
+    width: "100%",
   },
 });
 
