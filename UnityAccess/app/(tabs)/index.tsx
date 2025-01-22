@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -14,10 +14,11 @@ import {
 import MapView, { PROVIDER_GOOGLE, Region } from "react-native-maps";
 import { Feather, FontAwesome } from "@expo/vector-icons";
 import { useAuth } from "@/components/AuthContext";
-import { router } from "expo-router";
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const MapScreen: React.FC = () => {
-  // const { selectedFilters } = useSearchParams();
+  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
 
   const initialRegion: Region = {
     latitude: 43.6047, // Toulouse coordinates
@@ -27,13 +28,6 @@ const MapScreen: React.FC = () => {
   };
 
   const { logout } = useAuth();
-  // useEffect(() => {
-  //   if (selectedFilters) {
-  //     const filters = JSON.parse(selectedFilters as string);
-  //     console.log("Filtres sélectionnés :", filters);
-  //     // Faites quelque chose avec les filtres, comme afficher des POI sur la carte
-  //   }
-  // }, [selectedFilters]);
 
   function handleLogout() {
     logout();
@@ -43,6 +37,23 @@ const MapScreen: React.FC = () => {
   function handleSos() {
     router.push("/sos-page");
   }
+
+  const loadFilters = async () => {
+    try {
+      const storedFilters = await AsyncStorage.getItem("selectedFilters");
+      if (storedFilters) {
+        setSelectedFilters(JSON.parse(storedFilters));
+        console.log("Filtres chargés :", JSON.parse(storedFilters));
+      }
+    } catch (error) {
+      console.error("Erreur lors du chargement des filtres :", error);
+    }
+  };
+  useFocusEffect(
+    React.useCallback(() => {
+      loadFilters();
+    }, [])
+  );
 
   return (
     <KeyboardAvoidingView

@@ -22,6 +22,7 @@ export default function TabLayout() {
           animation: "slide_from_left", // Transition de gauche à droite
         }}
       />
+      <Stack.Screen name="settings" options={{ headerShown: false }} />
     </Stack>
   );
 }

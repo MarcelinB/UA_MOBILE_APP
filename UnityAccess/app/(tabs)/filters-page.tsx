@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -7,11 +7,13 @@ import {
   Image,
   ScrollView,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
 
 const FiltersPage: React.FC = () => {
-  // Liste des filtres disponibles
+  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
+
   const filters = [
     {
       id: "parking",
@@ -35,10 +37,39 @@ const FiltersPage: React.FC = () => {
     },
   ];
 
-  // État pour les filtres sélectionnés
-  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
+  // Charger les filtres sauvegardés
+  useEffect(() => {
+    const loadFilters = async () => {
+      try {
+        const storedFilters = await AsyncStorage.getItem("selectedFilters");
+        if (storedFilters) {
+          setSelectedFilters(JSON.parse(storedFilters));
+        }
+      } catch (error) {
+        console.error("Erreur lors du chargement des filtres :", error);
+      }
+    };
 
-  // Gérer la sélection ou désélection d'un filtre
+    loadFilters();
+  }, []);
+
+  // Sauvegarder les filtres sélectionnés
+  const saveFilters = async () => {
+    try {
+      await AsyncStorage.setItem(
+        "selectedFilters",
+        JSON.stringify(selectedFilters)
+      );
+      router.back(); // Retourner à la page précédente
+    } catch (error) {
+      console.error("Erreur lors de la sauvegarde des filtres :", error);
+    }
+  };
+
+  function handleSettings() {
+    router.push("/settings");
+  }
+
   const toggleFilter = (filterId: string) => {
     if (selectedFilters.includes(filterId)) {
       setSelectedFilters(selectedFilters.filter((id) => id !== filterId));
@@ -47,34 +78,24 @@ const FiltersPage: React.FC = () => {
     }
   };
 
-  // Retourner à la page précédente
-  function goBack() {
-    router.back();
-  }
-
-  // Sauvegarder les filtres sélectionnés et transmettre à la page principale
-  const saveFilters = () => {
-    router.push({
-      pathname: "/index",
-      params: { selectedFilters: JSON.stringify(selectedFilters) }, // Transmettre les filtres sous forme de paramètre
-    });
-  };
-
   return (
     <View style={styles.container}>
       {/* Bouton retour */}
-      <TouchableOpacity style={styles.closeButton} onPress={goBack}>
+      <TouchableOpacity
+        style={styles.closeButton}
+        onPress={() => router.back()}
+      >
         <Feather name="x" size={24} color="gray" />
       </TouchableOpacity>
 
       {/* Section profil */}
       <View style={styles.profileContainer}>
         <Image
-          source={{ uri: "https://via.placeholder.com/80" }} // Remplacez par l'image de votre utilisateur
+          source={{ uri: "https://via.placeholder.com/80" }}
           style={styles.profileImage}
         />
         <Text style={styles.profileName}>Alexandre Gabriel</Text>
-        <TouchableOpacity style={styles.profileButton}>
+        <TouchableOpacity style={styles.profileButton} onPress={handleSettings}>
           <Text style={styles.profileButtonText}>Voir le profil</Text>
         </TouchableOpacity>
       </View>
@@ -91,7 +112,7 @@ const FiltersPage: React.FC = () => {
               key={filter.id}
               style={[
                 styles.filterItem,
-                selectedFilters.includes(filter.id) && styles.filterSelected, // Ajouter un style si sélectionné
+                selectedFilters.includes(filter.id) && styles.filterSelected,
               ]}
               onPress={() => toggleFilter(filter.id)}
             >
@@ -106,7 +127,7 @@ const FiltersPage: React.FC = () => {
       <View style={styles.actionsContainer}>
         <TouchableOpacity
           style={styles.resetButton}
-          onPress={() => setSelectedFilters([])} // Réinitialiser les filtres sélectionnés
+          onPress={() => setSelectedFilters([])}
         >
           <Text style={styles.resetButtonText}>Réinitialiser</Text>
         </TouchableOpacity>
