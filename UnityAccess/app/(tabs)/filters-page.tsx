@@ -13,6 +13,11 @@ import { router } from "expo-router";
 
 const FiltersPage: React.FC = () => {
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
+  const [firstName, setFirstName] = useState("Alexandre");
+  const [lastName, setLastName] = useState("Gabriel");
+  const [profileImage, setProfileImage] = useState<string>(
+    "https://via.placeholder.com/80"
+  );
 
   const filters = [
     {
@@ -37,23 +42,26 @@ const FiltersPage: React.FC = () => {
     },
   ];
 
-  // Charger les filtres sauvegardés
   useEffect(() => {
-    const loadFilters = async () => {
+    const loadProfileData = async () => {
       try {
+        const savedFirstName = await AsyncStorage.getItem("firstName");
+        const savedLastName = await AsyncStorage.getItem("lastName");
+        const savedProfileImage = await AsyncStorage.getItem("profileImage");
         const storedFilters = await AsyncStorage.getItem("selectedFilters");
-        if (storedFilters) {
-          setSelectedFilters(JSON.parse(storedFilters));
-        }
+
+        if (savedFirstName) setFirstName(savedFirstName);
+        if (savedLastName) setLastName(savedLastName);
+        if (savedProfileImage) setProfileImage(savedProfileImage);
+        if (storedFilters) setSelectedFilters(JSON.parse(storedFilters));
       } catch (error) {
-        console.error("Erreur lors du chargement des filtres :", error);
+        console.error("Erreur lors du chargement des données :", error);
       }
     };
 
-    loadFilters();
+    loadProfileData();
   }, []);
 
-  // Sauvegarder les filtres sélectionnés
   const saveFilters = async () => {
     try {
       await AsyncStorage.setItem(
@@ -66,16 +74,16 @@ const FiltersPage: React.FC = () => {
     }
   };
 
-  function handleSettings() {
-    router.push("/settings");
-  }
-
   const toggleFilter = (filterId: string) => {
     if (selectedFilters.includes(filterId)) {
       setSelectedFilters(selectedFilters.filter((id) => id !== filterId));
     } else {
       setSelectedFilters([...selectedFilters, filterId]);
     }
+  };
+
+  const handleSettings = () => {
+    router.push("/settings");
   };
 
   return (
@@ -89,15 +97,26 @@ const FiltersPage: React.FC = () => {
       </TouchableOpacity>
 
       {/* Section profil */}
-      <View style={styles.profileContainer}>
+      <View style={styles.headerContainer}>
         <Image
-          source={{ uri: "https://via.placeholder.com/80" }}
+          source={
+            profileImage
+              ? { uri: profileImage }
+              : require("../../assets/images/default-profile.png")
+          }
           style={styles.profileImage}
         />
-        <Text style={styles.profileName}>Alexandre Gabriel</Text>
-        <TouchableOpacity style={styles.profileButton} onPress={handleSettings}>
-          <Text style={styles.profileButtonText}>Voir le profil</Text>
-        </TouchableOpacity>
+        <View style={styles.profileInfo}>
+          <Text style={styles.profileName}>
+            {firstName} {lastName}
+          </Text>
+          <TouchableOpacity
+            style={styles.profileButton}
+            onPress={handleSettings}
+          >
+            <Text style={styles.profileButtonText}>Voir le profil</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Ligne de séparation */}
@@ -150,27 +169,33 @@ const styles = StyleSheet.create({
     left: 20,
     zIndex: 10,
   },
-  profileContainer: {
+  headerContainer: {
+    flexDirection: "row",
     alignItems: "center",
-    marginTop: 100,
+    padding: 20,
+    marginTop: 80,
   },
   profileImage: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    marginBottom: 10,
+  },
+  profileInfo: {
+    marginLeft: 15,
+    justifyContent: "center",
   },
   profileName: {
     fontSize: 18,
     fontWeight: "bold",
     color: "#333",
+    marginBottom: 5,
   },
   profileButton: {
-    marginTop: 10,
     backgroundColor: "#5067C5",
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 20,
+    paddingHorizontal: 40,
+    paddingVertical: 12,
+    borderRadius: 25,
+    marginTop: 15,
   },
   profileButtonText: {
     color: "white",
@@ -206,7 +231,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   filterSelected: {
-    borderColor: "#5067C5", // Ajouter un cadre bleu pour les filtres sélectionnés
+    borderColor: "#5067C5",
   },
   filterIcon: {
     width: 50,

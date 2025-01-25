@@ -15,6 +15,18 @@ const SettingsPage: React.FC = () => {
     router.back();
   }
 
+  function handleLogout() {
+    logout();
+    router.replace("/(connexion)/log-page");
+  }
+
+  function handleEditPage() {
+    router.push("/edit-page");
+  }
+  function handleMedicalPage() {
+    router.push("/medical-page");
+  }
+
   return (
     <View style={styles.container}>
       {/* Header avec bouton retour */}
@@ -30,7 +42,10 @@ const SettingsPage: React.FC = () => {
         {/* Section Général */}
         <Text style={styles.sectionTitle}>Général</Text>
         <View style={styles.groupContainer}>
-          <TouchableOpacity style={[styles.settingItem, styles.noBorder]}>
+          <TouchableOpacity
+            style={[styles.settingItem, styles.noBorder]}
+            onPress={handleEditPage}
+          >
             <Image
               source={require("../../assets/images/Icon.png")}
               style={styles.icon}
@@ -38,7 +53,10 @@ const SettingsPage: React.FC = () => {
             <Text style={styles.settingText}>Modifier le profil</Text>
             <Feather name="chevron-right" size={24} color="gray" />
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.settingItem, styles.noBorder]}>
+          <TouchableOpacity
+            style={[styles.settingItem, styles.noBorder]}
+            onPress={handleMedicalPage}
+          >
             <Image
               source={require("../../assets/images/Medical.png")}
               style={styles.icon}
@@ -230,3 +248,6 @@ const styles = StyleSheet.create({
 });
 
 export default SettingsPage;
+function logout() {
+  throw new Error("Function not implemented.");
+}

@@ -23,6 +23,8 @@ export default function TabLayout() {
         }}
       />
       <Stack.Screen name="settings" options={{ headerShown: false }} />
+      <Stack.Screen name="edit-page" options={{ headerShown: false }} />
+      <Stack.Screen name="medical-page" options={{ headerShown: false }} />
     </Stack>
   );
 }
