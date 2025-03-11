@@ -47,7 +47,7 @@ const SettingsPage: React.FC = () => {
             onPress={handleEditPage}
           >
             <Image
-              source={require("../../assets/images/Icon.png")}
+              source={require("../../assets/images/icon.png")}
               style={styles.icon}
             />
             <Text style={styles.settingText}>Modifier le profil</Text>
